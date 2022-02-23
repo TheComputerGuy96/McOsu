@@ -1013,6 +1013,7 @@ OsuOptionsMenu::OsuOptionsMenu(Osu *osu) : OsuScreenBackable(osu)
 	addCheckbox("Draw Stats: Note Density", "How many objects are visible at the same time.", convar->getConVarByName("osu_draw_statistics_nd"));
 	addCheckbox("Draw Stats: Unstable Rate", convar->getConVarByName("osu_draw_statistics_ur"));
 	addCheckbox("Draw Stats: Accuracy Error", "Average hit error delta (e.g. -5ms +15ms).\nSee \"osu_hud_statistics_hitdelta_chunksize 30\",\nit defines how many recent hit deltas are averaged.", convar->getConVarByName("osu_draw_statistics_hitdelta"));
+	addCheckbox("Draw Stats: Current Time (24-hour)", convar->getConVarByName("osu_draw_statistics_time"));
 	addSpacer();
 	m_hudSizeSlider = addSlider("HUD Scale:", 0.01f, 3.0f, convar->getConVarByName("osu_hud_scale"), 165.0f);
 	m_hudSizeSlider->setChangeCallback( fastdelegate::MakeDelegate(this, &OsuOptionsMenu::onSliderChangePercent) );

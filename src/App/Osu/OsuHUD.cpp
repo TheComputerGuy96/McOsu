@@ -179,6 +179,7 @@ ConVar osu_draw_statistics_ur("osu_draw_statistics_ur", false);
 ConVar osu_draw_statistics_pp("osu_draw_statistics_pp", false);
 ConVar osu_draw_statistics_hitwindow300("osu_draw_statistics_hitwindow300", false);
 ConVar osu_draw_statistics_hitdelta("osu_draw_statistics_hitdelta", false);
+ConVar osu_draw_statistics_time("osu_draw_statistics_time", false);
 
 ConVar osu_combo_anim1_duration("osu_combo_anim1_duration", 0.15f);
 ConVar osu_combo_anim1_size("osu_combo_anim1_size", 0.15f);
@@ -2602,6 +2603,14 @@ void OsuHUD::drawStatistics(Graphics *g, int misses, int sliderbreaks, int slide
 		if (osu_draw_statistics_hitdelta.getBool())
 		{
 			drawStatisticText(g, UString::format("-%ims +%ims", std::abs(hitdeltaMin), hitdeltaMax));
+			g->translate(0, yDelta);
+		}
+		if (osu_draw_statistics_time.getBool())
+		{
+			time_t timestamp = std::time(0);
+			tm* time = std::localtime(&timestamp);
+
+			drawStatisticText(g, UString::format("%02d:%02d:%02d", time->tm_hour, time->tm_min, time->tm_sec));
 			g->translate(0, yDelta);
 		}
 	}
