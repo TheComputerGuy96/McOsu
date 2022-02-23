@@ -5,8 +5,6 @@
 // $NoKeywords: $osumain
 //===============================================================================//
 
-#include "OsuUpdateHandler.h"
-
 #include "Engine.h"
 #include "SoundEngine.h"
 #include "Keyboard.h"
@@ -255,15 +253,6 @@ OsuMainMenu::OsuMainMenu(Osu *osu) : OsuScreen(osu)
 	m_fShutdownScheduledTime = 0.0f;
 	m_bWasCleanShutdown = false;
 
-	m_fUpdateStatusTime = 0.0f;
-	m_fUpdateButtonTextTime = 0.0f;
-	m_fUpdateButtonAnim = 0.0f;
-	m_fUpdateButtonAnimTime = 0.0f;
-	m_bHasClickedUpdate = false;
-
-	m_bStartupAnim = true;
-	m_fStartupAnim = 0.0f;
-
 	// check if the user has never clicked the changelog for this update
 	m_bDrawVersionNotificationArrow = false;
 	if (env->fileExists(MCOSU_NEWVERSION_NOTIFICATION_TRIGGER_FILE))
@@ -294,12 +283,6 @@ OsuMainMenu::OsuMainMenu(Osu *osu) : OsuScreen(osu)
 	m_pauseButton = new OsuMainMenuPauseButton(0, 0, 0, 0, "", "");
 	m_pauseButton->setClickCallback( fastdelegate::MakeDelegate(this, &OsuMainMenu::onPausePressed) );
 	m_container->addBaseUIElement(m_pauseButton);
-
-	m_updateAvailableButton = new OsuUIButton(m_osu, 0, 0, 0, 0, "", Osu::debug->getBool() ? "Debug mode, update check disabled" : "Checking for updates ...");
-	m_updateAvailableButton->setUseDefaultSkin();
-	m_updateAvailableButton->setClickCallback( fastdelegate::MakeDelegate(this, &OsuMainMenu::onUpdatePressed) );
-	m_updateAvailableButton->setColor(0x2200ff00);
-	m_updateAvailableButton->setTextColor(0x22ffffff);
 
 	m_steamWorkshopButton = new OsuUIButton(m_osu, 0, 0, 0, 0, "", "Steam Workshop");
 	m_steamWorkshopButton->setUseDefaultSkin();
@@ -346,7 +329,6 @@ OsuMainMenu::~OsuMainMenu()
 	anim->deleteExistingAnimation(&m_fStartupAnim);
 
 	SAFE_DELETE(m_container);
-	SAFE_DELETE(m_updateAvailableButton);
 
 	// if the user didn't click on the update notification during this session, quietly remove it so it's not annoying
 	if (m_bWasCleanShutdown)
@@ -507,16 +489,6 @@ void OsuMainMenu::draw(Graphics *g)
 
 	// draw container
 	m_container->draw(g);
-
-	// draw update check button
-	if (m_osu->getUpdateHandler()->getStatus() == OsuUpdateHandler::STATUS::STATUS_SUCCESS_INSTALLATION)
-	{
-		g->push3DScene(McRect(m_updateAvailableButton->getPos().x, m_updateAvailableButton->getPos().y, m_updateAvailableButton->getSize().x, m_updateAvailableButton->getSize().y));
-		g->rotate3DScene(m_fUpdateButtonAnim*360.0f, 0, 0);
-	}
-	m_updateAvailableButton->draw(g);
-	if (m_osu->getUpdateHandler()->getStatus() == OsuUpdateHandler::STATUS::STATUS_SUCCESS_INSTALLATION)
-		g->pop3DScene();
 
 	// draw main button
 	float inset = 0.0f;
@@ -985,7 +957,6 @@ void OsuMainMenu::update()
 		m_container->stealFocus();
 
 	m_container->update();
-	m_updateAvailableButton->update();
 
 	if (m_osu->getOptionsMenu()->isMouseInside())
 		m_container->stealFocus();
@@ -1068,51 +1039,6 @@ void OsuMainMenu::update()
 
 		anim->moveLinear(&m_fMainMenuAnimFriendEyeFollowX, pushAngle.x, 0.25f, true);
 		anim->moveLinear(&m_fMainMenuAnimFriendEyeFollowY, pushAngle.y, 0.25f, true);
-	}
-
-	// handle update checker and status text
-	switch (m_osu->getUpdateHandler()->getStatus())
-	{
-	case OsuUpdateHandler::STATUS::STATUS_UP_TO_DATE:
-		if (m_updateAvailableButton->isVisible())
-		{
-			m_updateAvailableButton->setText("");
-			m_updateAvailableButton->setVisible(false);
-		}
-		break;
-	case OsuUpdateHandler::STATUS::STATUS_CHECKING_FOR_UPDATE:
-		m_updateAvailableButton->setText("Checking for updates ...");
-		break;
-	case OsuUpdateHandler::STATUS::STATUS_DOWNLOADING_UPDATE:
-		m_updateAvailableButton->setText("Downloading ...");
-		break;
-	case OsuUpdateHandler::STATUS::STATUS_INSTALLING_UPDATE:
-		m_updateAvailableButton->setText("Installing ...");
-		break;
-	case OsuUpdateHandler::STATUS::STATUS_SUCCESS_INSTALLATION:
-		if (engine->getTime() > m_fUpdateButtonTextTime && anim->isAnimating(&m_fUpdateButtonAnim) && m_fUpdateButtonAnim > 0.175f)
-		{
-			m_fUpdateButtonTextTime = m_fUpdateButtonAnimTime;
-
-			m_updateAvailableButton->setColor(0xff00ff00);
-			m_updateAvailableButton->setTextColor(0xffffffff);
-
-			if (m_updateAvailableButton->getText().find("ready") != -1)
-				m_updateAvailableButton->setText("Click here to restart now!");
-			else
-				m_updateAvailableButton->setText("A new version of McOsu is ready!");
-		}
-		break;
-	case OsuUpdateHandler::STATUS::STATUS_ERROR:
-		m_updateAvailableButton->setText("Update Error! Click to retry ...");
-		break;
-	}
-
-	if (m_osu->getUpdateHandler()->getStatus() == OsuUpdateHandler::STATUS::STATUS_SUCCESS_INSTALLATION && engine->getTime() > m_fUpdateButtonAnimTime)
-	{
-		m_fUpdateButtonAnimTime = engine->getTime() + 3.0f;
-		m_fUpdateButtonAnim = 0.0f;
-		anim->moveQuadInOut(&m_fUpdateButtonAnim, 1.0f, 0.5f, true);
 	}
 
 	// handle pause button pause detection
@@ -1208,12 +1134,9 @@ void OsuMainMenu::updateLayout()
 	m_pauseButton->setSize(30 * dpiScale, 30 * dpiScale);
 	m_pauseButton->setRelPos(m_osu->getScreenWidth() - m_pauseButton->getSize().x*2 - 10 * dpiScale, m_pauseButton->getSize().y + 10 * dpiScale);
 
-	m_updateAvailableButton->setSize(375 * dpiScale, 50 * dpiScale);
-	m_updateAvailableButton->setPos(m_osu->getScreenWidth()/2 - m_updateAvailableButton->getSize().x/2, m_osu->getScreenHeight() - m_updateAvailableButton->getSize().y - 10 * dpiScale);
-
 	m_steamWorkshopButton->onResized(); // HACKHACK: framework, setSize() does not update string metrics
-	m_steamWorkshopButton->setSize(m_updateAvailableButton->getSize());
-	m_steamWorkshopButton->setRelPos(m_updateAvailableButton->getPos().x, m_osu->getScreenHeight() - m_steamWorkshopButton->getSize().y - 4 * dpiScale);
+	m_steamWorkshopButton->setSize(375 * dpiScale, 50 * dpiScale);
+	m_steamWorkshopButton->setRelPos(m_osu->getScreenWidth()/2 - m_steamWorkshopButton->getSize().x/2, m_osu->getScreenHeight() - m_steamWorkshopButton->getSize().y - 4 * dpiScale);
 
 	m_githubButton->setSize(100 * dpiScale, 50 * dpiScale);
 	m_githubButton->setRelPos(5 * dpiScale, m_osu->getScreenHeight()/2.0f - m_githubButton->getSize().y/2.0f);
@@ -1454,16 +1377,6 @@ void OsuMainMenu::onPausePressed()
 
 	if (m_osu->getSelectedBeatmap() != NULL)
 		m_osu->getSelectedBeatmap()->pausePreviewMusic();
-}
-
-void OsuMainMenu::onUpdatePressed()
-{
-	if (m_osu->getInstanceID() > 1) return;
-
-	if (m_osu->getUpdateHandler()->getStatus() == OsuUpdateHandler::STATUS::STATUS_SUCCESS_INSTALLATION)
-		engine->restart();
-	else if (m_osu->getUpdateHandler()->getStatus() == OsuUpdateHandler::STATUS::STATUS_ERROR)
-		m_osu->getUpdateHandler()->checkForUpdates();
 }
 
 void OsuMainMenu::onSteamWorkshopPressed()

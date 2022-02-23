@@ -38,7 +38,6 @@
 #include "OsuRankingScreen.h"
 #include "OsuUserStatsScreen.h"
 #include "OsuKeyBindings.h"
-#include "OsuUpdateHandler.h"
 #include "OsuNotificationOverlay.h"
 #include "OsuTooltipOverlay.h"
 #include "OsuGameRules.h"
@@ -64,7 +63,6 @@
 #include "OsuUIVolumeSlider.h"
 
 // release configuration
-bool Osu::autoUpdater = false;
 ConVar osu_version("osu_version", 33.00f);
 #ifdef MCENGINE_FEATURE_OPENVR
 ConVar osu_release_stream("osu_release_stream", "vr");
@@ -313,7 +311,6 @@ Osu::Osu(Osu2 *osu2, int instanceID)
 	m_songBrowser2 = NULL;
 	m_backgroundImageHandler = NULL;
 	m_modSelector = NULL;
-	m_updateHandler = NULL;
 	m_multiplayer = NULL;
 
 	m_bF1 = false;
@@ -399,7 +396,6 @@ Osu::Osu(Osu2 *osu2, int instanceID)
 	// load a few select subsystems very early
 	m_notificationOverlay = new OsuNotificationOverlay(this);
 	m_score = new OsuScore(this);
-	m_updateHandler = new OsuUpdateHandler();
 
 	// exec the main config file (this must be right here!)
 	if (m_iInstanceID < 2)
@@ -508,8 +504,6 @@ Osu::Osu(Osu2 *osu2, int instanceID)
 	else
 		m_mainMenu->setVisible(true);
 
-	m_updateHandler->checkForUpdates();
-
 	/*
 	// DEBUG: immediately start diff of a beatmap
 	{
@@ -534,11 +528,6 @@ Osu::Osu(Osu2 *osu2, int instanceID)
 
 Osu::~Osu()
 {
-	// "leak" OsuUpdateHandler object, but not relevant since shutdown:
-	// this is the only way of handling instant user shutdown requests properly, there is no solution for active working threads besides letting the OS kill them when the main threads exits.
-	// we must not delete the update handler object, because the thread is potentially still accessing members during shutdown
-	m_updateHandler->stop(); // tell it to stop at the next cancellation point, depending on the OS/runtime and engine shutdown time it may get killed before that
-
 	SAFE_DELETE(m_windowManager);
 
 	for (int i=0; i<m_screens.size(); i++)
@@ -2213,8 +2202,7 @@ bool Osu::onShutdown()
 	m_optionsMenu->save();
 	m_songBrowser2->getDatabase()->save();
 
-	// the only time where a shutdown could be problematic is while an update is being installed, so we block it here
-	return m_updateHandler == NULL || m_updateHandler->getStatus() != OsuUpdateHandler::STATUS::STATUS_INSTALLING_UPDATE;
+	return true;
 }
 
 void Osu::onSkinReload()

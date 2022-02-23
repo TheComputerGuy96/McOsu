@@ -24,7 +24,6 @@ class OsuSongBrowser2;
 class OsuBackgroundImageHandler;
 class OsuRankingScreen;
 class OsuUserStatsScreen;
-class OsuUpdateHandler;
 class OsuNotificationOverlay;
 class OsuTooltipOverlay;
 class OsuSteamWorkshop;
@@ -49,7 +48,6 @@ public:
 	static ConVar *version;
 	static ConVar *debug;
 	static ConVar *ui_scale;
-	static bool autoUpdater;
 
 	static Vector2 osuBaseResolution;
 
@@ -141,7 +139,6 @@ public:
 	inline OsuMainMenu *getMainMenu() const {return m_mainMenu;}
 	inline OsuRankingScreen *getRankingScreen() const {return m_rankingScreen;}
 	inline OsuScore *getScore() const {return m_score;}
-	inline OsuUpdateHandler *getUpdateHandler() const {return m_updateHandler;}
 	inline OsuSteamWorkshop *getSteamWorkshop() const {return m_steamWorkshop;}
 	inline OsuUserStatsScreen *getUserStatsScreen() const {return m_userStatsScreen;}
 
@@ -285,7 +282,6 @@ private:
 	OsuVRTutorial *m_vrTutorial;
 	OsuChangelog *m_changelog;
 	OsuEditor *m_editor;
-	OsuUpdateHandler *m_updateHandler;
 	OsuSteamWorkshop *m_steamWorkshop;
 	OsuModFPoSu *m_fposu;
 

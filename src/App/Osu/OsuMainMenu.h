@@ -83,16 +83,9 @@ private:
 	void onExitButtonPressed();
 
 	void onPausePressed();
-	void onUpdatePressed();
 	void onSteamWorkshopPressed();
 	void onGithubPressed();
 	void onVersionPressed();
-
-	float m_fUpdateStatusTime;
-	float m_fUpdateButtonTextTime;
-	float m_fUpdateButtonAnimTime;
-	float m_fUpdateButtonAnim;
-	bool m_bHasClickedUpdate;
 
 	Vector2 m_vSize;
 	Vector2 m_vCenter;
@@ -107,7 +100,6 @@ private:
 	std::vector<OsuMainMenuButton*> m_menuElements;
 
 	OsuMainMenuPauseButton *m_pauseButton;
-	OsuUIButton *m_updateAvailableButton;
 	OsuUIButton *m_steamWorkshopButton;
 	OsuUIButton *m_githubButton;
 	CBaseUIButton *m_versionButton;
