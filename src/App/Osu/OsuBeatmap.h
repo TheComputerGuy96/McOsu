@@ -157,6 +157,7 @@ public:
 	// OsuHitObject and other helper functions
 	OsuScore::HIT addHitResult(OsuHitObject *hitObject, OsuScore::HIT hit, long delta, bool isEndOfCombo = false, bool ignoreOnHitErrorBar = false, bool hitErrorBarOnly = false, bool ignoreCombo = false, bool ignoreScore = false, bool ignoreHealth = false);
 	void addSliderBreak();
+	void addSliderEndMiss();
 	void addScorePoints(int points, bool isSpinner = false);
 	void addHealth(double percent, bool isFromHitResult);
 	void updateTimingPoints(long curPos);

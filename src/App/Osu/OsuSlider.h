@@ -78,6 +78,7 @@ private:
 	void onRepeatHit(bool successful, bool sliderend);
 	void onTickHit(bool successful, int tickIndex);
 	void onSliderBreak();
+	void onSliderEndMiss();
 
 	float getT(long pos, bool raw);
 

@@ -999,6 +999,7 @@ OsuOptionsMenu::OsuOptionsMenu(Osu *osu) : OsuScreenBackable(osu)
 	addCheckbox("Draw Stats: pp (SS)", "Max possible total pp for active mods (full combo + perfect acc).", convar->getConVarByName("osu_draw_statistics_perfectpp"));
 	addCheckbox("Draw Stats: Misses", "Number of misses.", convar->getConVarByName("osu_draw_statistics_misses"));
 	addCheckbox("Draw Stats: SliderBreaks", "Number of slider breaks.", convar->getConVarByName("osu_draw_statistics_sliderbreaks"));
+	addCheckbox("Draw Stats: SliderEnd Misses", "Number of slider ends missed/dropped.", convar->getConVarByName("osu_draw_statistics_sliderend_misses"));
 	addCheckbox("Draw Stats: Max Possible Combo", convar->getConVarByName("osu_draw_statistics_maxpossiblecombo"));
 	addCheckbox("Draw Stats: Stars*** (Until Now)", "Incrementally updates the star rating (aka \"realtime stars\").", convar->getConVarByName("osu_draw_statistics_livestars"));
 	addCheckbox("Draw Stats: Stars* (Total)", "Total stars for active mods.", convar->getConVarByName("osu_draw_statistics_totalstars"));

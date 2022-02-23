@@ -67,6 +67,7 @@ public:
 	void addHitResult(OsuBeatmap *beatmap, OsuScore::HIT hit, long delta, bool ignoreOnHitErrorBar, bool hitErrorBarOnly, bool ignoreCombo, bool ignoreScore); // only OsuBeatmap may call this function!
 	void addHitResultComboEnd(OsuScore::HIT hit);
 	void addSliderBreak(); // only OsuBeatmap may call this function!
+	void addSliderEndMiss(); // only OsuBeatmap may call this function!
 	void addPoints(int points, bool isSpinner);
 	void setComboFull(int comboFull) {m_iComboFull = comboFull;}
 	void setComboEndBitmask(int comboEndBitmask) {m_iComboEndBitmask = comboEndBitmask;}
@@ -102,6 +103,7 @@ public:
 	inline float getHitErrorAvgCustomMax() const {return m_fHitErrorAvgCustomMax;}
 	inline int getNumMisses() const {return m_iNumMisses;}
 	inline int getNumSliderBreaks() const {return m_iNumSliderBreaks;}
+	inline int getNumSliderEndMisses() const {return m_iNumSliderEndMisses;}
 	inline int getNum50s() const {return m_iNum50s;}
 	inline int getNum100s() const {return m_iNum100s;}
 	inline int getNum100ks() const {return m_iNum100ks;}
@@ -158,6 +160,7 @@ private:
 
 	int m_iNumMisses;
 	int m_iNumSliderBreaks;
+	int m_iNumSliderEndMisses;
 	int m_iNum50s;
 	int m_iNum100s;
 	int m_iNum100ks;

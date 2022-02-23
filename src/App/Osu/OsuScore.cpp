@@ -90,6 +90,7 @@ void OsuScore::reset()
 
 	m_iNumMisses = 0;
 	m_iNumSliderBreaks = 0;
+	m_iNumSliderEndMisses = 0;
 	m_iNum50s = 0;
 	m_iNum100s = 0;
 	m_iNum100ks = 0;
@@ -355,6 +356,11 @@ void OsuScore::addSliderBreak()
 	m_iNumSliderBreaks++;
 
 	onScoreChange();
+}
+
+void OsuScore::addSliderEndMiss()
+{
+	m_iNumSliderEndMisses++;
 }
 
 void OsuScore::addPoints(int points, bool isSpinner)

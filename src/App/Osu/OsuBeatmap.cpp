@@ -1995,6 +1995,11 @@ void OsuBeatmap::addSliderBreak()
 	m_osu->getScore()->addSliderBreak();
 }
 
+void OsuBeatmap::addSliderEndMiss()
+{
+	m_osu->getScore()->addSliderEndMiss();
+}
+
 void OsuBeatmap::addScorePoints(int points, bool isSpinner)
 {
 	m_osu->getScore()->addPoints(points, isSpinner);

@@ -1233,7 +1233,12 @@ void OsuSlider::update(long curPos)
 				if (percent >= 0.999f && allow300)
 					m_endResult = OsuScore::HIT::HIT_300;
 				else if (percent >= 0.5f && allow100 && !OsuGameRules::osu_mod_ming3012.getBool() && !OsuGameRules::osu_mod_no100s.getBool())
+				{
 					m_endResult = OsuScore::HIT::HIT_100;
+
+					if (!m_bHeldTillEnd)
+						onSliderEndMiss();
+				}
 				else if (percent > 0.0f && !OsuGameRules::osu_mod_no100s.getBool() && !OsuGameRules::osu_mod_no50s.getBool())
 					m_endResult = OsuScore::HIT::HIT_50;
 				else
@@ -1673,6 +1678,11 @@ void OsuSlider::onSliderBreak()
 		m_fSliderBreakRapeTime = engine->getTime() + 0.15f;
 		m_epilepsy_ref->setValue(1.0f);
 	}
+}
+
+void OsuSlider::onSliderEndMiss()
+{
+	m_beatmap->addSliderEndMiss();
 }
 
 void OsuSlider::onReset(long curPos)

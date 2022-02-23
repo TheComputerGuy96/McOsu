@@ -163,6 +163,7 @@ ConVar osu_draw_inputoverlay("osu_draw_inputoverlay", true);
 
 ConVar osu_draw_statistics_misses("osu_draw_statistics_misses", false);
 ConVar osu_draw_statistics_sliderbreaks("osu_draw_statistics_sliderbreaks", false);
+ConVar osu_draw_statistics_sliderend_misses("osu_draw_statistics_sliderend_misses", false);
 ConVar osu_draw_statistics_perfectpp("osu_draw_statistics_perfectpp", false);
 ConVar osu_draw_statistics_maxpossiblecombo("osu_draw_statistics_maxpossiblecombo", false);
 ConVar osu_draw_statistics_livestars("osu_draw_statistics_livestars", false);
@@ -328,6 +329,7 @@ void OsuHUD::draw(Graphics *g)
 			drawStatistics(g,
 					m_osu->getScore()->getNumMisses(),
 					m_osu->getScore()->getNumSliderBreaks(),
+					m_osu->getScore()->getNumSliderEndMisses(),
 					beatmap->getMaxPossibleCombo(),
 					OsuDifficultyCalculator::calculateTotalStarsFromSkills(beatmap->getAimStarsForUpToHitObjectIndex(hitObjectIndexForCurrentTime), beatmap->getSpeedStarsForUpToHitObjectIndex(hitObjectIndexForCurrentTime)),
 					m_osu->getSongBrowser()->getDynamicStarCalculator()->getTotalStars(),
@@ -626,7 +628,7 @@ void OsuHUD::drawDummy(Graphics *g)
 
 	drawSkip(g);
 
-	drawStatistics(g, 0, 0, 727, 2.3f, 5.5f, 180, 9.0f, 4.0f, 8.0f, 6.0f, 4, 6, 90.0f, 123, 1234, 25, -5, 15);
+	drawStatistics(g, 0, 0, 0, 727, 2.3f, 5.5f, 180, 9.0f, 4.0f, 8.0f, 6.0f, 4, 6, 90.0f, 123, 1234, 25, -5, 15);
 
 	drawWarningArrows(g);
 
@@ -678,6 +680,7 @@ void OsuHUD::drawVR(Graphics *g, Matrix4 &mvp, OsuVR *vr)
 			drawStatistics(g,
 					m_osu->getScore()->getNumMisses(),
 					m_osu->getScore()->getNumSliderBreaks(),
+					m_osu->getScore()->getNumSliderEndMisses(),
 					beatmap->getMaxPossibleCombo(),
 					OsuDifficultyCalculator::calculateTotalStarsFromSkills(beatmap->getAimStarsForUpToHitObjectIndex(hitObjectIndexForCurrentTime), beatmap->getSpeedStarsForUpToHitObjectIndex(hitObjectIndexForCurrentTime)),
 					m_osu->getSongBrowser()->getDynamicStarCalculator()->getTotalStars(),
@@ -754,7 +757,7 @@ void OsuHUD::drawVRDummy(Graphics *g, Matrix4 &mvp, OsuVR *vr)
 
 		drawSkip(g);
 
-		drawStatistics(g, 0, 0, 727, 2.3f, 5.5f, 180, 9.0f, 4.0f, 8.0f, 6.0f, 4, 6, 90.0f, 123, 1234, 25, -5, 15);
+		drawStatistics(g, 0, 0, 0, 727, 2.3f, 5.5f, 180, 9.0f, 4.0f, 8.0f, 6.0f, 4, 6, 90.0f, 123, 1234, 25, -5, 15);
 
 		if (osu_draw_score.getBool())
 			drawScore(g, scoreEntry.score);
@@ -2497,7 +2500,7 @@ void OsuHUD::drawProgressBarVR(Graphics *g, Matrix4 &mvp, OsuVR *vr, float perce
 	}
 }
 
-void OsuHUD::drawStatistics(Graphics *g, int misses, int sliderbreaks, int maxPossibleCombo, float liveStars,  float totalStars, int bpm, float ar, float cs, float od, float hp, int nps, int nd, int ur, float pp, float ppfc, float hitWindow300, int hitdeltaMin, int hitdeltaMax)
+void OsuHUD::drawStatistics(Graphics *g, int misses, int sliderbreaks, int sliderendmisses, int maxPossibleCombo, float liveStars,  float totalStars, int bpm, float ar, float cs, float od, float hp, int nps, int nd, int ur, float pp, float ppfc, float hitWindow300, int hitdeltaMin, int hitdeltaMax)
 {
 	g->pushTransform();
 	{
@@ -2525,6 +2528,11 @@ void OsuHUD::drawStatistics(Graphics *g, int misses, int sliderbreaks, int maxPo
 		if (osu_draw_statistics_sliderbreaks.getBool())
 		{
 			drawStatisticText(g, UString::format("SBrk: %i", sliderbreaks));
+			g->translate(0, yDelta);
+		}
+		if (osu_draw_statistics_sliderend_misses.getBool())
+		{
+			drawStatisticText(g, UString::format("SEnd: %i", sliderendmisses));
 			g->translate(0, yDelta);
 		}
 		if (osu_draw_statistics_maxpossiblecombo.getBool())
