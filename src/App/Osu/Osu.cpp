@@ -1903,12 +1903,6 @@ float Osu::getPitchMultiplier()
 {
 	float pitchMultiplier = 1.0f;
 
-	if (m_bModDC)
-		pitchMultiplier = 0.92f;
-
-	if (m_bModNC)
-		pitchMultiplier = 1.1166f;
-
 	if (osu_pitch_override.getFloat() > 0.0f)
 		return osu_pitch_override.getFloat();
 
@@ -2272,7 +2266,11 @@ void Osu::onSpeedChange(UString oldValue, UString newValue)
 	if (getSelectedBeatmap() != NULL)
 	{
 		float speed = newValue.toFloat();
-		getSelectedBeatmap()->setSpeed(speed >= 0.0f ? speed : getSpeedMultiplier());
+
+		if (m_bModNC || m_bModDC)
+			getSelectedBeatmap()->setSpeed(speed >= 0.0f ? speed : getSpeedMultiplier(), false);
+		else
+			getSelectedBeatmap()->setSpeed(speed >= 0.0f ? speed : getSpeedMultiplier(), true);
 	}
 }
 

@@ -160,7 +160,10 @@ void OsuBeatmapMania::onModUpdate()
 {
 	if (m_music != NULL)
 	{
-		m_music->setSpeed(m_osu->getSpeedMultiplier());
+		if (m_osu->getModNC() || m_osu->getModDC())
+			m_music->setSpeed(m_osu->getSpeedMultiplier(), false);
+		else
+			m_music->setSpeed(m_osu->getSpeedMultiplier(), true);
 		m_music->setPitch(m_osu->getPitchMultiplier());
 	}
 }

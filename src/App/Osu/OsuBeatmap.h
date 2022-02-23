@@ -79,7 +79,7 @@ public:
 
 	// music/sound
 	void setVolume(float volume);
-	void setSpeed(float speed);
+	void setSpeed(float speed, bool pitchCompensate);
 	void setPitch(float pitch);
 	void seekPercent(double percent);
 	void seekPercentPlayable(double percent);

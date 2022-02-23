@@ -411,7 +411,7 @@ void OsuBeatmap::update()
 		{
 			const float percentFinished = ((double)(m_iCurMusicPos - m_hitobjects[0]->getTime()) / (double)(m_hitobjects[m_hitobjects.size()-1]->getTime() + m_hitobjects[m_hitobjects.size()-1]->getDuration() - m_hitobjects[0]->getTime()));
 			const float speed = m_osu->getSpeedMultiplier() + percentFinished*m_osu->getSpeedMultiplier()*(osu_mod_timewarp_multiplier.getFloat()-1.0f);
-			m_music->setSpeed(speed);
+			m_music->setSpeed(speed, false);
 		}
 	}
 
@@ -1599,10 +1599,10 @@ void OsuBeatmap::setVolume(float volume)
 		m_music->setVolume(volume);
 }
 
-void OsuBeatmap::setSpeed(float speed)
+void OsuBeatmap::setSpeed(float speed, bool pitchCompensate)
 {
 	if (m_music != NULL)
-		m_music->setSpeed(speed);
+		m_music->setSpeed(speed, pitchCompensate);
 }
 
 void OsuBeatmap::setPitch(float pitch)
@@ -2308,7 +2308,7 @@ unsigned long OsuBeatmap::getMusicPositionMSInterpolated()
 
 			// calculate final return value
 			returnPos = (unsigned long)std::round(m_fInterpolatedMusicPos);
-			if (speed < 1.0f && osu_compensate_music_speed.getBool() && m_snd_speed_compensate_pitch_ref->getBool())
+			if (speed < 1.0f && osu_compensate_music_speed.getBool() && m_snd_speed_compensate_pitch_ref->getBool() || m_music->getPitchCompensate())
 				returnPos += (unsigned long)(((1.0f - speed) / 0.75f) * 5); // osu (new)
 				///returnPos += (unsigned long)((1.0f / speed) * 9); // Mc (old)
 		}
