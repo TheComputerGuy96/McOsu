@@ -171,7 +171,7 @@ public:
 	inline const UString &getAudioFileName() const {return m_sAudioFileName;}
 
 	inline unsigned long getLengthMS() const {return m_iLengthMS;}
-	inline unsigned long getPreviewTime() const {return m_iPreviewTime;}
+	inline signed long getPreviewTime() const {return m_iPreviewTime;}
 
 	inline float getAR() const {return m_fAR;}
 	inline float getCS() const {return m_fCS;}

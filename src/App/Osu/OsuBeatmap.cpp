@@ -2155,6 +2155,9 @@ void OsuBeatmap::handlePreviewPlay()
 
 			if (m_iContinueMusicPos != 0)
 				m_music->setPositionMS(m_iContinueMusicPos);
+			else if (m_selectedDifficulty2->getPreviewTime() == -1)
+				// See https://github.com/ppy/osu/blob/df088f96f476b1e80fe9b66c60b83e72548edc83/osu.Game/Beatmaps/WorkingBeatmap.cs#L125
+				m_music->setPositionMS(m_music->getLengthMS() * 0.4);
 			else
 				m_music->setPositionMS(m_selectedDifficulty2->getPreviewTime());
 

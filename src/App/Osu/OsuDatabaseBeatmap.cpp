@@ -977,7 +977,7 @@ bool OsuDatabaseBeatmap::loadMetadata(OsuDatabaseBeatmap *databaseBeatmap)
 						}
 
 						sscanf(curLineChar, " StackLeniency : %f \n", &databaseBeatmap->m_fStackLeniency);
-						sscanf(curLineChar, " PreviewTime : %lu \n", &databaseBeatmap->m_iPreviewTime);
+						sscanf(curLineChar, " PreviewTime : %ld \n", &databaseBeatmap->m_iPreviewTime);
 						sscanf(curLineChar, " Mode : %i \n", &databaseBeatmap->m_iGameMode);
 					}
 					break;
