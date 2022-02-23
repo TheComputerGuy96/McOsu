@@ -905,7 +905,8 @@ UString OsuUISongBrowserScoreButton::getModsStringForDisplay(int mods)
 		modsString.append("HR,");
 	if (mods & OsuReplay::Mods::SuddenDeath)
 		modsString.append("SD,");
-	if (mods & OsuReplay::Mods::DoubleTime)
+	if (mods & OsuReplay::Mods::DoubleTime &&
+	   !(mods & OsuReplay::Mods::Nightcore))
 		modsString.append("DT,");
 	if (mods & OsuReplay::Mods::Relax)
 		modsString.append("Relax,");
