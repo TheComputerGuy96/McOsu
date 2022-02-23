@@ -3970,7 +3970,10 @@ void OsuOptionsMenu::save()
 	{
 		out << keepLines[i].toUtf8() << "\n";
 	}
-	out << "\n";
+
+	// Prevent newline at the start of the file
+	if (!keepLines.empty())
+		out << "\n";
 
 	// write manual convars
 	for (int i=0; i<manualConCommands.size(); i++)
