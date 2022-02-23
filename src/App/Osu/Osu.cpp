@@ -354,6 +354,7 @@ Osu::Osu(Osu2 *osu2, int instanceID)
 	m_bModHT = false;
 	m_bModDC = false;
 	m_bModHD = false;
+	m_bModFL = false;
 	m_bModHR = false;
 	m_bModEZ = false;
 	m_bModSD = false;
@@ -1143,6 +1144,7 @@ void Osu::updateMods()
 	m_bModHT = osu_mods.getString().find("ht") != -1;
 	m_bModDC = osu_mods.getString().find("dc") != -1;
 	m_bModHD = osu_mods.getString().find("hd") != -1;
+	m_bModFL = osu_mods.getString().find("fl") != -1;
 	m_bModHR = osu_mods.getString().find("hr") != -1;
 	m_bModEZ = osu_mods.getString().find("ez") != -1;
 	m_bModSD = osu_mods.getString().find("sd") != -1;
@@ -1868,6 +1870,8 @@ float Osu::getScoreMultiplier()
 	}
 	if (m_bModHD)
 		multiplier *= 1.06f;
+	if (m_bModFL)
+		multiplier *= 1.12f;
 	if (m_bModSpunout)
 		multiplier *= 0.90f;
 

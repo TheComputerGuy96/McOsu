@@ -171,6 +171,7 @@ public:
 	inline bool getModHT() const {return m_bModHT;}
 	inline bool getModDC() const {return m_bModDC;}
 	inline bool getModHD() const {return m_bModHD;}
+	inline bool getModFL() const {return m_bModFL;}
 	inline bool getModHR() const {return m_bModHR;}
 	inline bool getModEZ() const {return m_bModEZ;}
 	inline bool getModSD() const {return m_bModSD;}
@@ -308,6 +309,7 @@ private:
 	bool m_bModHT;
 	bool m_bModDC;
 	bool m_bModHD;
+	bool m_bModFL;
 	bool m_bModHR;
 	bool m_bModEZ;
 	bool m_bModSD;

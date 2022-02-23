@@ -99,6 +99,7 @@ private:
 	bool m_bModHR;
 	bool m_bModNC;
 	bool m_bModDT;
+	bool m_bModFL;
 	bool m_bModNM;
 	bool m_bModScorev2;
 	bool m_bModTarget;

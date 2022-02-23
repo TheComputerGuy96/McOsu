@@ -253,6 +253,7 @@ OsuRankingScreen::OsuRankingScreen(Osu *osu) : OsuScreenBackable(osu)
 	m_bModHR = false;
 	m_bModNC = false;
 	m_bModDT = false;
+	m_bModFL = false;
 	m_bModNM = false;
 	m_bModScorev2 = false;
 	m_bModTarget = false;
@@ -304,6 +305,8 @@ void OsuRankingScreen::draw(Graphics *g)
 		drawModImage(g, m_osu->getSkin()->getSelectionModNightCore(), modPos, modPosMax);
 	else if (m_bModDT)
 		drawModImage(g, m_osu->getSkin()->getSelectionModDoubleTime(), modPos, modPosMax);
+	if (m_bModFL)
+		drawModImage(g, m_osu->getSkin()->getSelectionModFlashlight(), modPos, modPosMax);
 	if (m_bModNM)
 		drawModImage(g, m_osu->getSkin()->getSelectionModNightmare(), modPos, modPosMax);
 	if (m_bModScorev2)
@@ -527,6 +530,7 @@ void OsuRankingScreen::setScore(OsuScore *score)
 	m_bModHR = m_osu->getModHR();
 	m_bModNC = m_osu->getModNC();
 	m_bModDT = m_osu->getModDT();
+	m_bModFL = m_osu->getModFL();
 	m_bModNM = m_osu->getModNM();
 	m_bModScorev2 = m_osu->getModScorev2();
 	m_bModTarget = m_osu->getModTarget();
@@ -594,6 +598,7 @@ void OsuRankingScreen::setScore(OsuDatabase::Score score, UString dateTime)
 	m_bModHR = score.modsLegacy & OsuReplay::Mods::HardRock;
 	m_bModNC = score.modsLegacy & OsuReplay::Mods::Nightcore;
 	m_bModDT = score.modsLegacy & OsuReplay::Mods::DoubleTime;
+	m_bModFL = score.modsLegacy & OsuReplay::Mods::Flashlight;
 	m_bModNM = score.modsLegacy & OsuReplay::Mods::Nightmare;
 	m_bModScorev2 = score.modsLegacy & OsuReplay::Mods::ScoreV2;
 	m_bModTarget = score.modsLegacy & OsuReplay::Mods::Target;

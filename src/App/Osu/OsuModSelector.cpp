@@ -286,8 +286,7 @@ void OsuModSelector::updateButtons(bool initial)
 	m_modButtonDoubletime = setModButtonOnGrid(2, 1, 0, initial && m_osu->getModDT(), "dt", "Zoooooooooom.", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModDoubleTime();});
 	setModButtonOnGrid(2, 1, 1, initial && m_osu->getModNC(), "nc", "uguuuuuuuu", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModNightCore();});
 	m_modButtonHidden = setModButtonOnGrid(3, 1, 0, initial && m_osu->getModHD(), "hd", "Play with no approach circles and fading notes for a slight score advantage.", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModHidden();});
-	m_modButtonFlashlight = setModButtonOnGrid(4, 1, 0, false, "fl", "Restricted view area.", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModFlashlight();});
-	getModButtonOnGrid(4, 1)->setAvailable(false);
+	m_modButtonFlashlight = setModButtonOnGrid(4, 1, 0, initial && m_osu->getModFL(), "fl", "Restricted view area.", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModFlashlight();});
 	m_modButtonTD = setModButtonOnGrid(5, 1, 0, initial && (m_osu->getModTD() || m_osu_mod_touchdevice_ref->getBool()), "nerftd", "Simulate pp nerf for touch devices.\nOnly affects pp calculation.", [this]() -> OsuSkinImage *{return m_osu->getSkin()->getSelectionModTD();});
 	getModButtonOnGrid(5, 1)->setAvailable(!m_osu_mod_touchdevice_ref->getBool());
 

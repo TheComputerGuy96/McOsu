@@ -215,9 +215,9 @@ void OsuScore::addHitResult(OsuBeatmap *beatmap, HIT hit, long delta, bool ignor
 	if ((percent300s > 0.8f && m_iNumMisses == 0) || (percent300s > 0.9f))
 		m_grade = OsuScore::GRADE::GRADE_A;
 	if (percent300s > 0.9f && percent50s <= 0.01f && m_iNumMisses == 0)
-		m_grade = m_osu->getModHD() /* || m_osu->getModFlashlight() */ ? OsuScore::GRADE::GRADE_SH : OsuScore::GRADE::GRADE_S;
+		m_grade = m_osu->getModHD() || m_osu->getModFL() ? OsuScore::GRADE::GRADE_SH : OsuScore::GRADE::GRADE_S;
 	if (m_iNumMisses == 0 && m_iNum50s == 0 && m_iNum100s == 0)
-		m_grade = m_osu->getModHD() /* || m_osu->getModFlashlight() */ ? OsuScore::GRADE::GRADE_XH : OsuScore::GRADE::GRADE_X;
+		m_grade = m_osu->getModHD() || m_osu->getModFL() ? OsuScore::GRADE::GRADE_XH : OsuScore::GRADE::GRADE_X;
 
 	// recalculate unstable rate
 	float averageDelta = 0.0f;
@@ -561,6 +561,7 @@ int OsuScore::getModsLegacy()
 	modsLegacy |= (m_osu->getModHT() ? OsuReplay::Mods::HalfTime : 0);
 	modsLegacy |= (m_osu->getModDC() ? OsuReplay::Mods::HalfTime : 0);
 	modsLegacy |= (m_osu->getModHD() ? OsuReplay::Mods::Hidden : 0);
+	modsLegacy |= (m_osu->getModFL() ? OsuReplay::Mods::Flashlight : 0);
 	modsLegacy |= (m_osu->getModHR() ? OsuReplay::Mods::HardRock : 0);
 	modsLegacy |= (m_osu->getModEZ() ? OsuReplay::Mods::Easy : 0);
 	modsLegacy |= (m_osu->getModSD() ? OsuReplay::Mods::SuddenDeath : 0);
@@ -587,6 +588,8 @@ UString OsuScore::getModsStringForRichPresence()
 		modsString.append("SD");
 	if (m_osu->getModDT())
 		modsString.append("DT");
+	if (m_osu->getModFL())
+		modsString.append("FL");
 	if (m_osu->getModRelax())
 		modsString.append("RX");
 	if (m_osu->getModHT())
