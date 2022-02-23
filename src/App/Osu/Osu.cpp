@@ -1686,6 +1686,11 @@ void Osu::saveScreenshot()
 {
 	engine->getSound()->play(m_skin->getShutter());
 	int screenshotNumber = 0;
+
+	// Create screenshot directory if it doesn't exist
+	if (!env->directoryExists("screenshots"))
+		env->createDirectory("screenshots");
+
 	while (env->fileExists(UString::format("screenshots/screenshot%i.png", screenshotNumber)))
 	{
 		screenshotNumber++;
