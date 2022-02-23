@@ -1027,7 +1027,7 @@ void OsuHUD::drawFps(Graphics *g, McFont *font, float fps)
 {
 	fps = std::round(fps);
 	const UString fpsString = UString::format("%i fps", (int)(fps));
-	const UString msString = UString::format("%.1f ms", (1.0f/fps)*1000.0f);
+	const UString msString = fps > 1000 ? UString::format("%.2f ms", (1.0f/fps)*1000.0f) : UString::format("%.1f ms", (1.0f/fps)*1000.0f);
 
 	const float dpiScale = Osu::getUIScale();
 
