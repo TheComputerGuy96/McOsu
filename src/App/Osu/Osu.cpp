@@ -1685,7 +1685,10 @@ void Osu::onAudioOutputDeviceChange()
 void Osu::saveScreenshot()
 {
 	engine->getSound()->play(m_skin->getShutter());
+
 	int screenshotNumber = 0;
+	unsigned int width = engine->getGraphics()->getResolution().x;
+	unsigned int height = engine->getGraphics()->getResolution().y;
 
 	// Create screenshot directory if it doesn't exist
 	if (!env->directoryExists("screenshots"))
@@ -1695,11 +1698,23 @@ void Osu::saveScreenshot()
 	{
 		screenshotNumber++;
 	}
+
 	std::vector<unsigned char> pixels = engine->getGraphics()->getScreenshot();
-	Image::saveToImage(&pixels[0], engine->getGraphics()->getResolution().x, engine->getGraphics()->getResolution().y, UString::format("screenshots/screenshot%i.png", screenshotNumber));
+
+	if (!pixels.empty())
+	{
+		Image::saveToImage(&pixels[0], width, height, UString::format("screenshots/screenshot%i.png", screenshotNumber));
+	}
+	else
+	{
+#ifndef __linux__
+		// SDL dialogs cause an older Mutter segfault on Wayland, so disable that for now
+		engine->showMessageError("Osu Error", "Couldn't get screenshot data!");
+#endif
+		debugLog("Osu Error: Couldn't get screenshot data!\n");
+		return;
+	}
 }
-
-
 
 void Osu::onBeforePlayStart()
 {
