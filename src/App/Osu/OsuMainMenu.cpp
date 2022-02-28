@@ -306,6 +306,7 @@ OsuMainMenu::OsuMainMenu(Osu *osu) : OsuScreen(osu)
 	UString versionString = MCOSU_VERSION_TEXT;
 	versionString.append(" ");
 	versionString.append(UString::format("%g", Osu::version->getFloat()));
+	versionString.append(" (DodoGTA fork)");
 	m_versionButton->setText(versionString);
 	m_versionButton->setDrawBackground(false);
 	m_versionButton->setDrawFrame(false);
@@ -1401,12 +1402,12 @@ void OsuMainMenu::onGithubPressed()
 
 	if (env->getOS() == Environment::OS::OS_HORIZON)
 	{
-		m_osu->getNotificationOverlay()->addNotification("Go to https://github.com/McKay42/McOsu/", 0xffffffff, false, 0.75f);
+		m_osu->getNotificationOverlay()->addNotification("Go to https://github.com/TheComputerGuy96/McOsu/", 0xffffffff, false, 0.75f);
 		return;
 	}
 
 	m_osu->getNotificationOverlay()->addNotification("Opening browser, please wait ...", 0xffffffff, false, 0.75f);
-	env->openURLInDefaultBrowser("https://github.com/McKay42/McOsu/");
+	env->openURLInDefaultBrowser("https://github.com/TheComputerGuy96/McOsu/");
 }
 
 void OsuMainMenu::onVersionPressed()
