@@ -878,21 +878,19 @@ void OsuHUD::drawCursorInt(Graphics *g, Shader *trailShader, std::vector<CURSORT
 				if (trailShader == m_cursorTrailShaderVR)
 				{
 					trailShader->setUniformMatrix4fv("matrix", mvp);
+
+					g->updateTransform();
+					Matrix4 mv = g->getMV();
+					if (mv != NULL)
+						trailShader->setUniformMatrix4fv("mv", mv);
 				}
 
 				trailShader->setUniform1f("time", engine->getTime());
 
-#ifdef MCENGINE_FEATURE_OPENGLES
-
-				OpenGLES2Interface *gles2 = dynamic_cast<OpenGLES2Interface*>(g);
-				if (gles2 != NULL)
-				{
-					gles2->forceUpdateTransform();
-					Matrix4 mvp = gles2->getMVP();
+				g->updateTransform();
+				Matrix4 mvp = g->getMVP();
+				if (mvp != NULL)
 					trailShader->setUniformMatrix4fv("mvp", mvp);
-				}
-
-#endif
 
 				trailImage->bind();
 				{

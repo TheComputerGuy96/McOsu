@@ -1,4 +1,6 @@
-#version 110
+#ifdef GL_ES
+precision mediump float;
+#endif
 
 uniform sampler2D tex;
 uniform int part;
@@ -108,29 +110,6 @@ void main()
 		float delta = ((tex_coord.x - size) / (1.0-size));
 		out_color = mix(outerBodyColor, innerBodyColor, delta);
 	}
-	
-	// linear variant
-	/*
-	// just shadow
-	float delta = tex_coord.x/(outerShadowSize-transitionSize);
-	out_color += mix(vec4(0.0), outerShadowColor, delta) * clamp(ceil(-delta+1.0), 0.0, 1.0);
-	
-	// shadow + border
-	delta = (tex_coord.x - outerShadowSize + transitionSize) / (2.0*transitionSize);
-	out_color += mix(outerShadowColor, borderColor, delta) * clamp(ceil(tex_coord.x - (outerShadowSize - transitionSize)), 0.0, 1.0) * clamp(ceil(-abs(delta)+1.0), 0.0, 1.0);
-	
-	// just border
-	out_color += borderColor * clamp(ceil(tex_coord.x - (outerShadowSize + transitionSize)), 0.0, 1.0) * clamp(ceil(-(tex_coord.x - (outerShadowSize + borderSize - transitionSize))), 0.0, 1.0);
-	
-	// border + outer body
-	delta = (tex_coord.x - outerShadowSize - borderSize + transitionSize) / (2.0*transitionSize);
-	out_color += mix(borderColor, outerBodyColor, delta) * clamp(ceil(tex_coord.x - (outerShadowSize + borderSize - transitionSize)), 0.0, 1.0) * clamp(ceil(-abs(delta)+1.0), 0.0, 1.0);
-	
-	// outer body + inner body
-	delta = outerShadowSize + borderSize + transitionSize;
-	delta = (tex_coord.x - delta) / (1.0-delta); // [VARIABLE REUSING INTENSIFIES]
-	out_color += mix(outerBodyColor, innerBodyColor, delta) * clamp(ceil(tex_coord.x - (outerShadowSize + borderSize + transitionSize)), 0.0, 1.0);
-	*/
 	
 	gl_FragColor = out_color;
 }

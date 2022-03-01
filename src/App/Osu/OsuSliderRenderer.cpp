@@ -367,20 +367,13 @@ void OsuSliderRenderer::draw(Graphics *g, Osu *osu, VertexArrayObject *vao, cons
 						g->translate(translation.x, translation.y);
 						///g->scale(scaleToApplyAfterTranslationX, scaleToApplyAfterTranslationY); // aspire slider distortions
 
-#ifdef MCENGINE_FEATURE_OPENGLES
-
 						if (!osu_slider_use_gradient_image.getBool())
 						{
-							OpenGLES2Interface *gles2 = dynamic_cast<OpenGLES2Interface*>(g);
-							if (gles2 != NULL)
-							{
-								gles2->forceUpdateTransform();
-								Matrix4 mvp = gles2->getMVP();
+							g->updateTransform();
+							Matrix4 mvp = g->getMVP();
+							if (mvp != NULL)
 								BLEND_SHADER->setUniformMatrix4fv("mvp", mvp);
-							}
 						}
-
-#endif
 
 						g->drawVAO(vao);
 					}
@@ -413,7 +406,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 
 #elif defined(MCENGINE_FEATURE_OPENGLES)
 
-	//const bool isOpenGLRendererHack = (dynamic_cast<OpenGLES2Interface*>(g) != NULL);
+	const bool isOpenGLRendererHack = (dynamic_cast<OpenGLES2Interface*>(g) != NULL);
 
 #endif
 
@@ -450,6 +443,12 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 		{
 			BLEND_SHADER_VR->enable();
 			BLEND_SHADER_VR->setUniformMatrix4fv("matrix", mvp);
+
+			g->updateTransform();
+			Matrix4 mv = g->getMV();
+			if (mv != NULL)
+				BLEND_SHADER_VR->setUniformMatrix4fv("mv", mv);
+
 			BLEND_SHADER_VR->setUniform1i("style", osu_slider_osu_next_style.getBool() ? 1 : 0);
 			BLEND_SHADER_VR->setUniform1f("bodyAlphaMultiplier", osu_slider_body_alpha_multiplier.getFloat());
 			BLEND_SHADER_VR->setUniform1f("bodyColorSaturation", osu_slider_body_color_saturation.getFloat());
@@ -461,7 +460,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 		g->setColor(0xffffffff);
 		osu->getSkin()->getSliderGradient()->bind();
 		{
-#if defined(MCENGINE_FEATURE_OPENGL)
+#if defined(MCENGINE_FEATURE_OPENGL) || defined(MCENGINE_FEATURE_OPENGLES)
 
 			if (isOpenGLRendererHack)
 				glBlendEquation(GL_MAX); // HACKHACK: OpenGL hardcoded
@@ -483,7 +482,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 					drawFillSliderBodyPeppyVR(g, osu, vr, mvp, alwaysPoints, UNIT_CIRCLE_VAO_BAKED, hitcircleDiameter/2.0f, 0, alwaysPoints.size());
 			}
 
-#if defined(MCENGINE_FEATURE_OPENGL)
+#if defined(MCENGINE_FEATURE_OPENGL) || defined(MCENGINE_FEATURE_OPENGLES)
 
 			if (isOpenGLRendererHack)
 				glBlendEquation(GL_FUNC_ADD); // HACKHACK: OpenGL hardcoded
@@ -510,7 +509,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 
 #elif defined(MCENGINE_FEATURE_OPENGLES)
 
-	//const bool isOpenGLRendererHack = (dynamic_cast<OpenGLES2Interface*>(g) != NULL);
+	const bool isOpenGLRendererHack = (dynamic_cast<OpenGLES2Interface*>(g) != NULL);
 
 #endif
 
@@ -544,6 +543,12 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 		{
 			BLEND_SHADER_VR->enable();
 			BLEND_SHADER_VR->setUniformMatrix4fv("matrix", mvp);
+
+			g->updateTransform();
+			Matrix4 mv = g->getMV();
+			if (mv != NULL)
+				BLEND_SHADER_VR->setUniformMatrix4fv("mv", mv);
+
 			BLEND_SHADER_VR->setUniform1i("style", osu_slider_osu_next_style.getBool() ? 1 : 0);
 			BLEND_SHADER_VR->setUniform1f("bodyAlphaMultiplier", osu_slider_body_alpha_multiplier.getFloat());
 			BLEND_SHADER_VR->setUniform1f("bodyColorSaturation", osu_slider_body_color_saturation.getFloat());
@@ -556,7 +561,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 		osu->getSkin()->getSliderGradient()->bind();
 		{
 
-#if defined(MCENGINE_FEATURE_OPENGL)
+#if defined(MCENGINE_FEATURE_OPENGL) || defined(MCENGINE_FEATURE_OPENGLES)
 
 			if (isOpenGLRendererHack)
 				glBlendEquation(GL_MAX); // HACKHACK: OpenGL hardcoded
@@ -580,7 +585,7 @@ void OsuSliderRenderer::drawVR(Graphics *g, Osu *osu, OsuVR *vr, Matrix4 &mvp, f
 					drawFillSliderBodyPeppyVR(g, osu, vr, mvp, alwaysPoints, UNIT_CIRCLE_VAO_BAKED, hitcircleDiameter/2.0f, 0, alwaysPoints.size());
 			}
 
-#if defined(MCENGINE_FEATURE_OPENGL)
+#if defined(MCENGINE_FEATURE_OPENGL) || defined(MCENGINE_FEATURE_OPENGLES)
 
 			if (isOpenGLRendererHack)
 				glBlendEquation(GL_FUNC_ADD); // HACKHACK: OpenGL hardcoded
@@ -688,12 +693,6 @@ void OsuSliderRenderer::drawFillSliderBodyPeppy(Graphics *g, Osu *osu, const std
 	if (drawUpToIndex < 0)
 		drawUpToIndex = points.size();
 
-#ifdef MCENGINE_FEATURE_OPENGLES
-
-	OpenGLES2Interface *gles2 = dynamic_cast<OpenGLES2Interface*>(g);
-
-#endif
-
 	g->pushTransform();
 	{
 		// now, translate and draw the master vao for every curve point
@@ -710,16 +709,13 @@ void OsuSliderRenderer::drawFillSliderBodyPeppy(Graphics *g, Osu *osu, const std
 
 			g->translate(x-startX, y-startY, 0);
 
-#ifdef MCENGINE_FEATURE_OPENGLES
-
-			if (shader != NULL && gles2 != NULL)
+			if (shader != NULL)
 			{
-				gles2->forceUpdateTransform();
-				Matrix4 mvp = gles2->getMVP();
-				shader->setUniformMatrix4fv("mvp", mvp);
+				g->updateTransform();
+				Matrix4 mvp = g->getMVP();
+				if (mvp != NULL)
+					shader->setUniformMatrix4fv("mvp", mvp);
 			}
-
-#endif
 
 			g->drawVAO(circleMesh);
 
