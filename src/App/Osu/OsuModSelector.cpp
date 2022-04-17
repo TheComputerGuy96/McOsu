@@ -236,6 +236,7 @@ OsuModSelector::OsuModSelector(Osu *osu) : OsuScreen(osu)
 		addExperimentalCheckbox("Timewarp", "Speed increases from 100% to 150% over the course of the beatmap.", convar->getConVarByName("osu_mod_timewarp"));
 
 	addExperimentalCheckbox("AR Timewarp", "Approach rate decreases from 100% to 50% over the course of the beatmap.", convar->getConVarByName("osu_mod_artimewarp"));
+	addExperimentalCheckbox("Approach Different", "Customize the approach circle animation.\nSee osu_mod_approach_different_style.\nSee osu_mod_approach_different_initial_size.", convar->getConVarByName("osu_mod_approach_different"));
 	addExperimentalCheckbox("Minimize", "Circle size decreases from 100% to 50% over the course of the beatmap.", convar->getConVarByName("osu_mod_minimize"));
 	addExperimentalCheckbox("Fading Cursor", "The cursor fades the higher the combo, becoming invisible at 50.", convar->getConVarByName("osu_mod_fadingcursor"));
 	addExperimentalCheckbox("First Person", "Centered cursor.", convar->getConVarByName("osu_mod_fps"));
@@ -243,14 +244,15 @@ OsuModSelector::OsuModSelector(Osu *osu) : OsuScreen(osu)
 	addExperimentalCheckbox("Jigsaw 2", "Massively reduced slider follow circle radius.", convar->getConVarByName("osu_mod_jigsaw2"));
 	addExperimentalCheckbox("Full Alternate", "You can never use the same key twice in a row.", convar->getConVarByName("osu_mod_fullalternate"));
 	addExperimentalCheckbox("Random", "Randomizes hitobject positions. (VERY experimental!)", convar->getConVarByName("osu_mod_random"));
-	addExperimentalCheckbox("Reverse Sliders", "Reverses the direction of all sliders (reload beatmap to apply!).", convar->getConVarByName("osu_mod_reverse_sliders"));
+	addExperimentalCheckbox("Reverse Sliders", "Reverses the direction of all sliders. (Reload beatmap to apply!)", convar->getConVarByName("osu_mod_reverse_sliders"));
 	addExperimentalCheckbox("No 50s", "Only 300s or 100s. Try harder.", convar->getConVarByName("osu_mod_no50s"));
 	addExperimentalCheckbox("No 100s no 50s", "300 or miss. PF \"lite\"", convar->getConVarByName("osu_mod_no100s"));
 	addExperimentalCheckbox("MinG3012", "No 100s. Only 300s or 50s. Git gud.", convar->getConVarByName("osu_mod_ming3012"));
 	addExperimentalCheckbox("MillhioreF", "Go below AR 0. Doubled approach time.", convar->getConVarByName("osu_mod_millhioref"));
 	addExperimentalCheckbox("Mafham", "Approach rate is set to negative infinity. See the entire beatmap at once.\nUses very aggressive optimizations to keep the framerate high, you have been warned!", convar->getConVarByName("osu_mod_mafham"));
-	addExperimentalCheckbox("Flip Horizontally", "Playfield is flipped horizontally.", convar->getConVarByName("osu_playfield_mirror_horizontal"));
-	addExperimentalCheckbox("Flip Vertically", "Playfield is flipped vertically.", convar->getConVarByName("osu_playfield_mirror_vertical"));
+	addExperimentalCheckbox("Strict Tracking", "Leaving sliders in any way counts as a miss and combo break.\nSlider ticks are removed. (Reload beatmap to apply!)", convar->getConVarByName("osu_mod_strict_tracking"));
+	addExperimentalCheckbox("Flip Up/Down", "Playfield is flipped upside down (mirrored at horizontal axis).", convar->getConVarByName("osu_playfield_mirror_horizontal"));
+	addExperimentalCheckbox("Flip Left/Right", "Playfield is flipped left/right (mirrored at vertical axis).", convar->getConVarByName("osu_playfield_mirror_vertical"));
 
 	// build score multiplier label
 	m_scoreMultiplierLabel = new CBaseUILabel();
@@ -1383,26 +1385,23 @@ UString OsuModSelector::getOverrideSliderLabelText(OsuModSelector::OVERRIDE_SLID
 
 				int minBPM = m_osu->getSelectedBeatmap()->getSelectedDifficulty2()->getMinBPM();
 				int maxBPM = m_osu->getSelectedBeatmap()->getSelectedDifficulty2()->getMaxBPM();
+				int mostCommonBPM = m_osu->getSelectedBeatmap()->getSelectedDifficulty2()->getMostCommonBPM();
 				int newMinBPM = minBPM * m_osu->getSpeedMultiplier();
 				int newMaxBPM = maxBPM * m_osu->getSpeedMultiplier();
-				if (!active)
+				int newMostCommonBPM = mostCommonBPM * m_osu->getSpeedMultiplier();
+				if (!active || m_osu->getSpeedMultiplier() == 1.0f)
 				{
 					if (minBPM == maxBPM)
 						newLabelText.append(UString::format("%i", newMaxBPM));
 					else
-						newLabelText.append(UString::format("%i-%i", newMinBPM, newMaxBPM));
+						newLabelText.append(UString::format("%i-%i (%i)", newMinBPM, newMaxBPM, newMostCommonBPM));
 				}
 				else
 				{
-					if (m_osu->getSpeedMultiplier() == 1.0f)
-						newLabelText.append(UString::format("%i", newMaxBPM));
+					if (minBPM == maxBPM)
+						newLabelText.append(UString::format("%i -> %i", maxBPM, newMaxBPM));
 					else
-					{
-						if (minBPM == maxBPM)
-							newLabelText.append(UString::format("%i -> %i", maxBPM, newMaxBPM));
-						else
-							newLabelText.append(UString::format("%i-%i -> %i-%i", minBPM, maxBPM,  newMinBPM, newMaxBPM));
-					}
+						newLabelText.append(UString::format("%i-%i (%i) -> %i-%i (%i)", minBPM, maxBPM, mostCommonBPM, newMinBPM, newMaxBPM, newMostCommonBPM));
 				}
 
 				newLabelText.append(")");
